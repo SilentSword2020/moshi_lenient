@@ -9,3 +9,8 @@
 
 2.根据不同的数据类型自定义对应的JsonAdapter(主要参考源码中对应类型的内置JsonAdapter)
 
+## 参考资料
+
+[Moshi项目]("https://github.com/square/moshi")
+
+[新一代Json解析库Moshi使用及原理解析]("https://blog.csdn.net/cpongo4/article/details/86613947")
