@@ -1,6 +1,6 @@
 @file:JvmName("JsonAdapterUtil")
 
-package com.study.app.json.moshi.adapter.extentions
+package com.study.app.json.moshi.adapter.extensions
 
 import android.util.Log
 import com.squareup.moshi.JsonAdapter
