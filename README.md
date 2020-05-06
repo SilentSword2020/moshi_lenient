@@ -1,4 +1,4 @@
-# moshi lenint
+# moshi lenient
 
  * 解析JSON 结构数据，容忍一些常见的不规范的格式。
  * 允许：{} <- [] / ""，[] <- "", Integer <- "", Float <- ""
