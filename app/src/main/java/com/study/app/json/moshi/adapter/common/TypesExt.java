@@ -13,7 +13,9 @@ import static com.squareup.moshi.internal.Util.resolve;
 /**
  * Type的工具类
  */
-public class TypesExt {
+public final class TypesExt {
+    private TypesExt() {
+    }
 
     /**
      * Returns a two element array containing this map's key and value types in positions 0 and 1

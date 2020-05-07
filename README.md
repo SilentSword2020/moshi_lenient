@@ -5,9 +5,19 @@
 
 ## 实现方案(两种方案)
 
-1.通过分析JsonDataException的message格式进行分别处理
+1. 通过分析JsonDataException的message格式进行分别处理
 
-2.根据不同的数据类型自定义对应的JsonAdapter(主要参考源码中对应类型的内置JsonAdapter)
+* 优点：代码少（只有一个类），只一个类，使用方便
+
+* 缺点：如果JsonDataException的message内容有变动，需要调整相关的逻辑
+
+
+2. 根据不同的数据类型自定义对应的JsonAdapter(主要参考源码中对应类型的内置JsonAdapter)
+
+* 优点：使用方便
+
+* 缺点：代码多（添加的自定义JsonAdapter类比较多），<br>后面Moshi相关的JsonAdapter源码代码逻辑调整（需要重新修改自定义JsonAdapter）;
+性能方面：不管json是不是正常，都会先检查再处理，有点性能损失问题，不过应该不大（主要是相关流的拷贝）
 
 ## 参考资料
 
