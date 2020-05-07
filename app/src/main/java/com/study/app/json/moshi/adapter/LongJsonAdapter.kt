@@ -2,6 +2,7 @@ package com.study.app.json.moshi.adapter
 
 import android.util.Log
 import com.squareup.moshi.*
+import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class LongJsonAdapter {
@@ -30,11 +31,11 @@ class LongJsonAdapter {
                     try {
                         return@fromJson this.toLong()
                     } catch (e: Throwable) {
-                        Log.w(MoshiCompatJsonAdapterFactory.TAG, e.message ?: "unknown throwable")
+                        Log.w(TAG, e.message ?: "unknown throwable")
                         return@fromJson LONG_DEFAULT_VALUE
                     }
                 }
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, "long value is null")
+                Log.w(TAG, "long value is null")
                 return LONG_DEFAULT_VALUE
             }
 
@@ -65,11 +66,11 @@ class LongJsonAdapter {
                     try {
                         return@fromJson this.toLong()
                     } catch (e: Throwable) {
-                        Log.w(MoshiCompatJsonAdapterFactory.TAG, e.message ?: "unknown throwable")
+                        Log.w(TAG, e.message ?: "unknown throwable")
                         return@fromJson LONG_OBJ_DEFAULT_VALUE
                     }
                 }
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, "Long value is null")
+                Log.w(TAG, "Long value is null")
                 return LONG_OBJ_DEFAULT_VALUE
             }
 

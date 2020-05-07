@@ -6,7 +6,7 @@ import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
-import com.study.app.json.moshi.adapter.MoshiCompatJsonAdapterFactory;
+import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory;
 
 import org.junit.Test;
 
@@ -24,8 +24,15 @@ import static org.junit.Assert.fail;
 
 @SuppressWarnings("ConstantConditions")
 public class JsonAdapterTest {
+    /**
+     * 普通的JsonAdapter
+     */
     private JsonAdapter<Data> jsonAdapter = new Moshi.Builder().build().adapter(Data.class);
-    private JsonAdapter<Data> lenientPhpJsonAdapter = MoshiCompatJsonAdapterFactory.INSTANCE.addCompatJsonAdapters(new Moshi.Builder().build())
+    /**
+     * 支持json格式容忍的JsonAdapter
+     */
+    private JsonAdapter<Data> lenientPhpJsonAdapter = MoshiLenientJsonAdapterFactory
+            .addLenientJsonAdapters(new Moshi.Builder().build())
             .adapter(Data.class);
 
 
@@ -588,6 +595,8 @@ public class JsonAdapterTest {
 
     @Test
     public void fromJson_mapFromArray() throws Exception {
+        System.out.println("fromJson_mapFromArray  ***START***");
+
         // {} <- []，Moshi 拒绝
         try {
             Data data = jsonAdapter.fromJson("{\"strMap\": []}");
@@ -595,7 +604,9 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path $.strMap", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- []，Moshi 拒绝 ***END***");
 
         // {} <- [["a","b"]]，Moshi 拒绝
         try {
@@ -604,34 +615,50 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path $.strMap", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+
+        System.out.println("{} <- [[\"a\",\"b\"]]，Moshi 拒绝 ***END***");
+
+        System.out.println("fromJson_mapFromArray  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_mapFromArray() throws Exception {
+        System.out.println("fromJsonLenientPhp_mapFromArray  ***START***");
+
         // {} <- [], 此时：[] 视为 null
         // 此处与 GsonUtil 不一样，Gson 默认就允许从 [] 读取 Map
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"strMap\": []}");
+            System.out.println("{} <- [] data.strMap:" + (data.strMap == null ? "null" : data.strMap));
             assertNull(data.strMap);
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.strMap = null;
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- [], 此时：[] 视为 null ***END***");
 
         // {} <- [["a","b"]]，Moshi 拒绝
         try {
             Data data = lenientPhpJsonAdapter.fromJson("{\"strMap\": [[\"a\",\"b\"]]}");
+            System.out.println("{} <- [[\"a\",\"b\"]] data.strMap:" + (data.strMap == null ? "null" : data.strMap));
             fail("data: " + data);
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path $.strMap", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- [[\"a\",\"b\"]]，Moshi 拒绝，不需要支持，不用容忍处理 ***END***");
+
+        System.out.println("fromJsonLenientPhp_mapFromArray  ***END***");
     }
 
     @Test
     public void fromJson_objFromEmptyString() throws Exception {
+        System.out.println("fromJson_objFromEmptyString  ***START***");
+
         // {} <- ""
         try {
             Data data = jsonAdapter.fromJson("{\"data\": \"\"}");
@@ -639,7 +666,9 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was STRING at path $.data", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- \"\"，Moshi本身不支持 ***END***");
 
         // {} <- ""
         try {
@@ -648,28 +677,40 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was STRING at path $.data2", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- \"\"，Moshi本身不支持 ***END***");
+
+        System.out.println("fromJson_objFromEmptyString  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_objFromEmptyString() throws Exception {
+        System.out.println("fromJsonLenientPhp_objFromEmptyString  ***START***");
+
         // {} <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"data\": \"\"}");
+            System.out.println("{} <- \"\", 此时：\"\" 视为 null data.data:" + (data.data == null ? "null" : data.data));
             assertNull(data.data);
             Data expectedData = new Data();
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- \"\", 此时：\"\" 视为 null ***END***");
 
         // {} <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"data2\": \"\"}");
+            System.out.println("{} <- \"\", 此时：\"\" 视为 null data.data2:" + (data.data2 == null ? "null" : data.data2));
             assertNull(data.data2);
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.data2 = null;
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- \"\", 此时：\"\" 视为 null ***END***");
+
+        System.out.println("fromJsonLenientPhp_objFromEmptyString  ***END***");
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.study.app.json.moshi.adapter
 
 import android.util.Log
 import com.squareup.moshi.*
+import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class DoubleJsonAdapter {
@@ -30,11 +31,11 @@ class DoubleJsonAdapter {
                     try {
                         return@fromJson this.toDouble()
                     } catch (e: Throwable) {
-                        Log.w(MoshiCompatJsonAdapterFactory.TAG, e.message ?: "unknown throwable")
+                        Log.w(TAG, e.message ?: "unknown throwable")
                         return@fromJson DOUBLE_DEFAULT_VALUE
                     }
                 }
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, "double value is null")
+                Log.w(TAG, "double value is null")
                 return DOUBLE_DEFAULT_VALUE
             }
 
@@ -65,11 +66,11 @@ class DoubleJsonAdapter {
                     try {
                         return@fromJson this.toDouble()
                     } catch (e: Throwable) {
-                        Log.w(MoshiCompatJsonAdapterFactory.TAG, e.message ?: "unknown throwable")
+                        Log.w(TAG, e.message ?: "unknown throwable")
                         return@fromJson DOUBLE_OBJ_DEFAULT_VALUE
                     }
                 }
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, "Double value is null")
+                Log.w(TAG, "Double value is null")
                 return DOUBLE_OBJ_DEFAULT_VALUE
             }
 

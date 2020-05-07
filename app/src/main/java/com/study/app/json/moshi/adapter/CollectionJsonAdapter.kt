@@ -2,8 +2,8 @@ package com.study.app.json.moshi.adapter
 
 import com.squareup.moshi.*
 import com.squareup.moshi.JsonAdapter.Factory
+import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.isJsonValueInvalid
 import java.io.IOException
-import java.lang.reflect.Array
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.collections.ArrayList
@@ -12,6 +12,8 @@ import kotlin.collections.ArrayList
  * [] <- "", 此时："" 视为 []
  *
  * Converts collection types to JSON arrays containing their converted contents.
+ *
+ * 注意：MutableCollection和Collection的区别
  */
 abstract class CollectionJsonAdapter<C : MutableCollection<T?>?, T> private constructor(
     private val elementAdapter: JsonAdapter<T>
@@ -21,16 +23,13 @@ abstract class CollectionJsonAdapter<C : MutableCollection<T?>?, T> private cons
     @FromJson
     @Throws(IOException::class)
     override fun fromJson(reader: JsonReader): C {
-        //使用一个reader的拷贝，来提前获取数据进行检查
-        val cloneReader = reader.peekJson()
-        val nextValueEmpty = cloneReader.nextString().isNullOrEmpty()
-        cloneReader.close()
-        if (nextValueEmpty) {
-            //如果json值为空串，跳过这个值，不处理
+        if (isJsonValueInvalid(reader)) {
+            //如果json值为无效，跳过这个值，不处理
             reader.skipValue()
             //返回一个空列表
             return newCollection()
         }
+
         val result = newCollection()
         reader.beginArray()
         while (reader.hasNext()) {

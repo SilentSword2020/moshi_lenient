@@ -2,6 +2,7 @@ package com.study.app.json.moshi.adapter
 
 import android.util.Log
 import com.squareup.moshi.*
+import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class IntJsonAdapter {
@@ -30,11 +31,11 @@ class IntJsonAdapter {
                     try {
                         return@fromJson this.toInt()
                     } catch (e: Throwable) {
-                        Log.w(MoshiCompatJsonAdapterFactory.TAG, e.message ?: "unknown throwable")
+                        Log.w(TAG, e.message ?: "unknown throwable")
                         return@fromJson INT_DEFAULT_VALUE
                     }
                 }
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, "int value is null")
+                Log.w(TAG, "int value is null")
                 return INT_DEFAULT_VALUE
             }
 
@@ -65,11 +66,11 @@ class IntJsonAdapter {
                     try {
                         return@fromJson this.toInt()
                     } catch (e: Throwable) {
-                        Log.w(MoshiCompatJsonAdapterFactory.TAG, e.message ?: "unknown throwable")
+                        Log.w(TAG, e.message ?: "unknown throwable")
                         return@fromJson INTEGER_DEFAULT_VALUE
                     }
                 }
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, "int value is null")
+                Log.w(TAG, "int value is null")
                 return INTEGER_DEFAULT_VALUE
             }
 

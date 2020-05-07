@@ -2,6 +2,7 @@ package com.study.app.json.moshi.adapter
 
 import com.squareup.moshi.*
 import com.squareup.moshi.JsonAdapter.Factory
+import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.isJsonValueInvalid
 import java.io.IOException
 import java.lang.reflect.Array
 import java.lang.reflect.GenericArrayType
@@ -23,12 +24,8 @@ class ArrayJsonAdapter(
     @FromJson
     @Throws(IOException::class)
     override fun fromJson(reader: JsonReader): Any {
-        //使用一个reader的拷贝，来提前获取数据进行检查
-        val cloneReader = reader.peekJson()
-        val nextValueEmpty = cloneReader.nextString().isNullOrEmpty()
-        cloneReader.close()
-        if (nextValueEmpty) {
-            //如果json值为空串，跳过这个值，不处理
+        if (isJsonValueInvalid(reader)) {
+            //如果json值为无效，跳过这个值，不处理
             reader.skipValue()
             //返回一个空数组
             return Array.newInstance(elementClass, 0)

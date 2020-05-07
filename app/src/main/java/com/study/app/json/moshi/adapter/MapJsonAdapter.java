@@ -28,6 +28,7 @@ import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.ToJson;
 import com.squareup.moshi.Types;
+import com.study.app.json.moshi.adapter.common.TypesExt;
 import com.study.app.json.moshi.adapter.reflect.ReflectUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,16 +38,14 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.squareup.moshi.internal.Util.getGenericSupertype;
-import static com.squareup.moshi.internal.Util.resolve;
+import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG;
+import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.isJsonValueInvalid;
 
 /**
  * {} <- "", 此时："" 视为 null
@@ -65,7 +64,7 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
             if (!annotations.isEmpty()) return null;
             Class<?> rawType = Types.getRawType(type);
             if (rawType != Map.class) return null;
-            Type[] keyAndValue = mapKeyAndValueTypes(type, rawType);
+            Type[] keyAndValue = TypesExt.mapKeyAndValueTypes(type, rawType);
             return new MapJsonAdapter<>(moshi, keyAndValue[0], keyAndValue[1]).nullSafe();
         }
     };
@@ -110,9 +109,9 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
             try {
                 method.invoke(writer, (Object[]) null);
             } catch (IllegalAccessException e) {
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+                Log.w(TAG, e.getMessage());
             } catch (InvocationTargetException e) {
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+                Log.w(TAG, e.getMessage());
             }
         } else {
             method = ReflectUtil.getMethod(JsonWriter.class, METHOD_PROMOTE_VALUE_TO_NAME, (Class<?>[]) null);
@@ -126,13 +125,8 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
     @FromJson
     @Override
     public Map<K, V> fromJson(JsonReader reader) throws IOException {
-        //使用一个reader的拷贝，来提前获取数据进行检查
-        JsonReader cloneReader = reader.peekJson();
-        String nextValue = cloneReader.nextString();
-        boolean nextValueEmpty = nextValue == null || nextValue.length() == 0;
-        cloneReader.close();
-        if (nextValueEmpty) {
-            //如果json值为空串，跳过这个值，不处理
+        if (isJsonValueInvalid(reader)) {
+            //如果json值为无效，跳过这个值，不处理
             reader.skipValue();
             //返回null
             return null;
@@ -169,13 +163,13 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
             }
             return (Map<K, V>) mapConstructor.newInstance(null);
         } catch (ClassNotFoundException e) {
-            Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+            Log.w(TAG, e.getMessage());
         } catch (IllegalAccessException e) {
-            Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+            Log.w(TAG, e.getMessage());
         } catch (InstantiationException e) {
-            Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+            Log.w(TAG, e.getMessage());
         } catch (InvocationTargetException e) {
-            Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+            Log.w(TAG, e.getMessage());
         }
         return new LinkedHashMap<>();
     }
@@ -191,9 +185,9 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
             try {
                 method.invoke(reader, null);
             } catch (IllegalAccessException e) {
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+                Log.w(TAG, e.getMessage());
             } catch (InvocationTargetException e) {
-                Log.w(MoshiCompatJsonAdapterFactory.TAG, e.getMessage());
+                Log.w(TAG, e.getMessage());
             }
         } else {
             method = ReflectUtil.getMethod(JsonWriter.class, METHOD_PROMOTE_NAME_TO_VALUE, null);
@@ -209,35 +203,6 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
         return "JsonAdapter(" + keyAdapter + "=" + valueAdapter + ")";
     }
 
-    /**
-     * Returns a two element array containing this map's key and value types in positions 0 and 1
-     * respectively.
-     */
-    static Type[] mapKeyAndValueTypes(Type context, Class<?> contextRawType) {
-        // Work around a problem with the declaration of java.util.Properties. That class should extend
-        // Hashtable<String, String>, but it's declared to extend Hashtable<Object, Object>.
-        if (context == Properties.class) return new Type[]{String.class, String.class};
-
-        Type mapType = getSupertype(context, contextRawType, Map.class);
-        if (mapType instanceof ParameterizedType) {
-            ParameterizedType mapParameterizedType = (ParameterizedType) mapType;
-            return mapParameterizedType.getActualTypeArguments();
-        }
-        return new Type[]{Object.class, Object.class};
-    }
-
-    /**
-     * Returns the generic form of {@code supertype}. For example, if this is {@code
-     * ArrayList<String>}, this returns {@code Iterable<String>} given the input {@code
-     * Iterable.class}.
-     *
-     * @param supertype a superclass of, or interface implemented by, this.
-     */
-    static Type getSupertype(Type context, Class<?> contextRawType, Class<?> supertype) {
-        if (!supertype.isAssignableFrom(contextRawType)) throw new IllegalArgumentException();
-        return resolve(context, contextRawType,
-                getGenericSupertype(context, contextRawType, supertype));
-    }
 
     @NonNull
     public static Moshi.Builder addAdapter(@NotNull Moshi.Builder builder) {
