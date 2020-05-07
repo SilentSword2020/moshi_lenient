@@ -9,6 +9,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
+ * [] <- "", 此时："" 视为 []
+ *
  * Converts collection types to JSON arrays containing their converted contents.
  */
 abstract class CollectionJsonAdapter<C : MutableCollection<T?>?, T> private constructor(

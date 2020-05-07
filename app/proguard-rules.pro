@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 下面的类有反射操作，不能混淆
+-keep class com.squareup.moshi.LinkedHashTreeMap { *; }
+-keep class com.squareup.moshi.JsonWriter { *; }
+-keep class com.squareup.moshi.JsonReader { *; }
+

@@ -9,6 +9,8 @@ import java.lang.reflect.Type
 import java.util.*
 
 /**
+ * [] <- "", 此时："" 视为 []
+ *
  * Converts arrays to JSON arrays containing their converted contents. This
  * supports both primitive and object arrays.
  *

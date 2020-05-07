@@ -550,7 +550,7 @@ public class JsonAdapterTest {
 
     @Test
     public void fromJson_mapFromEmptyString() throws Exception {
-        //TODO
+        System.out.println("fromJson_mapFromEmptyString  ***START***");
 
         // {} <- ""
         try {
@@ -559,20 +559,31 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was STRING at path $.strMap", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- \"\" Moshi本身不支持 ***END***");
+
+        System.out.println("fromJson_mapFromEmptyString  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_mapFromEmptyString() throws Exception {
+        System.out.println("fromJsonLenientPhp_mapFromEmptyString  ***START***");
+
         // {} <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"strMap\": \"\"}");
+            System.out.println("{} <- \"\" data.strMap:" + (data.strMap == null ? "null" : data.strMap));
             assertNull(data.strMap);
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.strMap = null;
             assertEquals(expectedData, data);
         }
+
+        System.out.println("{} <- \"\" ***END***");
+
+        System.out.println("fromJsonLenientPhp_mapFromEmptyString  ***END***");
     }
 
     @Test

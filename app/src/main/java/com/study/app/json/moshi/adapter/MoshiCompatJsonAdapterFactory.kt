@@ -15,6 +15,7 @@ object MoshiCompatJsonAdapterFactory {
         builder = DoubleJsonAdapter.addAdapter(builder)
         builder = ArrayJsonAdapter.addAdapter(builder)
         builder = CollectionJsonAdapter.addAdapter(builder)
+        builder = MapJsonAdapter.addAdapter(builder)
         return builder.build()
     }
 
