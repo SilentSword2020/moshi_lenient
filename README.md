@@ -21,6 +21,6 @@
 
 ## 参考资料
 
-[Moshi项目]("https://github.com/square/moshi")
+[Moshi项目]("https://github.com/square/moshi") https://github.com/square/moshi
 
-[新一代Json解析库Moshi使用及原理解析]("https://blog.csdn.net/cpongo4/article/details/86613947")
+[新一代Json解析库Moshi使用及原理解析]("https://blog.csdn.net/cpongo4/article/details/86613947") https://blog.csdn.net/cpongo4/article/details/86613947
