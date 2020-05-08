@@ -1,6 +1,7 @@
 package com.study.app.json.moshi.adapter
 
 import com.squareup.moshi.*
+import com.study.app.json.moshi.adapter.extensions.fromJsonPrimitiveType
 import java.io.IOException
 
 class IntJsonAdapter {

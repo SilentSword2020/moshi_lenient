@@ -2,6 +2,7 @@ package com.study.app.json.moshi.adapter
 
 import com.squareup.moshi.*
 import com.squareup.moshi.JsonAdapter.Factory
+import com.study.app.json.moshi.adapter.extensions.isJsonValueInvalid
 import java.io.IOException
 import java.lang.reflect.Array
 import java.lang.reflect.GenericArrayType

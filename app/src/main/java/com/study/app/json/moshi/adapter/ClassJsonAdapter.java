@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static com.squareup.moshi.internal.Util.resolve;
-import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactoryKt.isJsonValueInvalid;
+import static com.study.app.json.moshi.adapter.extensions.JsonAdapterExt.isJsonValueInvalid;
 
 /**
  * Emits a regular class as a JSON object by mapping Java fields to JSON object properties.

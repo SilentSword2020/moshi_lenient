@@ -45,7 +45,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG;
-import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactoryKt.isJsonValueInvalid;
+import static com.study.app.json.moshi.adapter.extensions.JsonAdapterExt.isJsonValueInvalid;
 
 /**
  * {} <- "", 此时："" 视为 null
@@ -152,16 +152,17 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
      *
      * @return
      */
+    @SuppressWarnings("unchecked")
     private Map<K, V> createMap() {
         try {
             if (mapConstructor == null) {
                 synchronized (this) {
                     if (mapConstructor == null) {
-                        mapConstructor = ReflectUtil.getConstructor(Class.forName(CLASS_LINKED_HASH_TREE_MAP), null);
+                        mapConstructor = ReflectUtil.getConstructor(Class.forName(CLASS_LINKED_HASH_TREE_MAP), (Class<?>[]) null);
                     }
                 }
             }
-            return (Map<K, V>) mapConstructor.newInstance(null);
+            return (Map<K, V>) mapConstructor.newInstance((Object[]) null);
         } catch (ClassNotFoundException e) {
             Log.w(TAG, e.getMessage());
         } catch (IllegalAccessException e) {
@@ -183,14 +184,14 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
         Method method = methodCache.get(METHOD_PROMOTE_NAME_TO_VALUE);
         if (method != null) {
             try {
-                method.invoke(reader, null);
+                method.invoke(reader, (Object[]) null);
             } catch (IllegalAccessException e) {
                 Log.w(TAG, e.getMessage());
             } catch (InvocationTargetException e) {
                 Log.w(TAG, e.getMessage());
             }
         } else {
-            method = ReflectUtil.getMethod(JsonWriter.class, METHOD_PROMOTE_NAME_TO_VALUE, null);
+            method = ReflectUtil.getMethod(JsonWriter.class, METHOD_PROMOTE_NAME_TO_VALUE, (Class<?>[]) null);
             if (method != null) {
                 methodCache.putIfAbsent(METHOD_PROMOTE_NAME_TO_VALUE, method);
                 promoteNameToValue(reader);
