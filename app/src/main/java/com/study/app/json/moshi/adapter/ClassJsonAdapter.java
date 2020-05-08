@@ -149,6 +149,12 @@ final class ClassJsonAdapter<T> extends JsonAdapter<T> {
     @FromJson
     @Override
     public T fromJson(JsonReader reader) throws IOException {
+        if (isJsonValueInvalid(reader)) {
+            //如果json值为无效，跳过这个值，不处理
+            reader.skipValue();
+            //返回null
+            return null;
+        }
         T result;
         try {
             result = classFactory.newInstance();
@@ -158,12 +164,6 @@ final class ClassJsonAdapter<T> extends JsonAdapter<T> {
             throw Util.rethrowCause(e);
         } catch (IllegalAccessException e) {
             throw new AssertionError();
-        }
-        if (isJsonValueInvalid(reader)) {
-            //如果json值为无效，跳过这个值，不处理
-            reader.skipValue();
-            //返回null
-            return null;
         }
         try {
             reader.beginObject();

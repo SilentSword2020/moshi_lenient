@@ -715,6 +715,8 @@ public class JsonAdapterTest {
 
     @Test
     public void fromJson_objFromEmptyArray() throws Exception {
+        System.out.println("fromJson_objFromEmptyArray  ***START***");
+
         // {} <- []
         try {
             Data data = jsonAdapter.fromJson("{\"data\": []}");
@@ -722,8 +724,9 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path $.data", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
-
+        System.out.println("{} <- [], Moshi本身不支持 ***END***");
         // {} <- []
         try {
             Data data = jsonAdapter.fromJson("{\"data2\": []}");
@@ -731,55 +734,74 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path $.data2", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- [], Moshi本身不支持 ***END***");
+
+        System.out.println("fromJson_objFromEmptyArray  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_objFromEmptyArray() throws Exception {
+        System.out.println("fromJsonLenientPhp_objFromEmptyArray  ***START***");
+
         // {} <- [], 此时：[] 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"data\": []}");
+            System.out.println("{} <- [], 此时：[] 视为 null data.data:" + (data.data == null ? "null" : data.data));
             assertNull(data.data);
             Data expectedData = new Data();
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- [], 此时：[] 视为 null ***END***");
 
         // {} <- [], 此时：[] 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"data2\": []}");
+            System.out.println("{} <- [], 此时：[] 视为 null data.data2:" + (data.data2 == null ? "null" : data.data2));
             assertNull(data.data2);
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.data2 = null;
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- [], 此时：[] 视为 null ***END***");
+
+        System.out.println("fromJsonLenientPhp_objFromEmptyArray  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_deepIn() throws Exception {
+        System.out.println("fromJsonLenientPhp_deepIn  ***START***");
+
         // {} <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"dataList\": [\"\"]}");
+            System.out.println("{} <- \"\", 此时：\"\" 视为 null data.dataList.get(0):" + (data.dataList.get(0) == null ? "null" : data.dataList.get(0)));
             assertNull(data.dataList.get(0));
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.dataList = Collections.singletonList(null);
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- \"\", 此时：\"\" 视为 null ***END***");
 
-        // int <- "", 此时："" 视为 null，仍然拒绝
+        // int <- "", 此时："" 视为 0
         // 此处与 GsonUtil 不一样，Gson 会忽略此时的 null
         try {
             Data data = lenientPhpJsonAdapter.fromJson("{\"dataList\": [{\"num\": \"\"}]}");
-            fail("data: " + data);
+            System.out.println("int <- \"\", 此时：\"\" 视为 0 data.dataList.get(0).num:" + (data.dataList.get(0) == null ? "null" : data.dataList.get(0).num));
         } catch (JsonDataException e) {
             assertEquals("Expected an int but was  at path $.dataList[0].num", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("int <- \"\", 此时：\"\" 视为 null ***END***");
 
         // Integer <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"dataList\": [{\"num2\": \"\"}]}");
+            System.out.println("int <- \"\", 此时：\"\" 视为 null data.dataList.get(0).num2:" + (data.dataList.get(0) == null ? "null" : data.dataList.get(0).num2));
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             Data2 data2 = new Data2();
@@ -787,10 +809,15 @@ public class JsonAdapterTest {
             expectedData.dataList = Collections.singletonList(data2);
             assertEquals(expectedData, data);
         }
+        System.out.println("Integer <- \"\", 此时：\"\" 视为 null ***END***");
+
+        System.out.println("fromJsonLenientPhp_deepIn  ***END***");
     }
 
     @Test
     public void fromJson_objFromEmptyArrayAlias() throws Exception {
+        System.out.println("fromJson_objFromEmptyArrayAlias  ***START***");
+
         // {} <- []，Moshi 拒绝
         try {
             Data data = jsonAdapter.fromJson("{\"a_data\": []}");
@@ -798,7 +825,9 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path $.a_data", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("{} <- []，Moshi 拒绝, Moshi本身不支持 ***END***");
 
         // Integer <- ""
         try {
@@ -807,7 +836,9 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected an int but was  at path $.dataList[0].a_num", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("Integer <- \"\", Moshi本身不支持 ***END***");
 
         // Integer <- ""
         try {
@@ -816,7 +847,9 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected an int but was  at path $.a_data.num2", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+        System.out.println("Integer <- \"\", Moshi本身不支持 ***END***");
 
         // Integer <- ""
         try {
@@ -825,24 +858,34 @@ public class JsonAdapterTest {
         } catch (JsonDataException e) {
             assertEquals("Expected an int but was  at path $.a_data.a_num", e.getMessage());
             assertNull(e.getCause());
+            e.printStackTrace();
         }
+
+        System.out.println("Integer <- \"\", Moshi本身不支持 ***END***");
+
+        System.out.println("fromJson_objFromEmptyArrayAlias  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_objFromEmptyArrayAlias() throws Exception {
+        System.out.println("fromJsonLenientPhp_objFromEmptyArrayAlias  ***START***");
+
         // {} <- [], 此时：[] 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"a_data\": []}");
+            System.out.println("{} <- [], 此时：[] 视为 null data.dataAlias:" + (data.dataAlias == null ? "null" : data.dataAlias));
             assertNull(data.dataAlias);
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.dataAlias = null;
             assertEquals(expectedData, data);
         }
+        System.out.println("{} <- [], 此时：[] 视为 null ***END***");
 
         // Integer <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"dataList\": [{\"a_num\": \"\"}]}");
+            System.out.println("Integer <- \"\", 此时：\"\" 视为 null data.dataList.get(0).numAlias:" + (data.dataList.get(0) == null ? "null" : data.dataList.get(0).numAlias));
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             Data2 data2 = new Data2();
@@ -850,10 +893,12 @@ public class JsonAdapterTest {
             expectedData.dataList = Collections.singletonList(data2);
             assertEquals(expectedData, data);
         }
+        System.out.println("Integer <- \"\", 此时：\"\" 视为 null ***END***");
 
         // Integer <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"a_data\": {\"num2\": \"\"}}");
+            System.out.println("Integer <- \"\", 此时：\"\" 视为 null data.dataAlias..num2:" + (data.dataAlias == null ? "null" : data.dataAlias.num2));
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             Data2 data2 = new Data2();
@@ -861,10 +906,12 @@ public class JsonAdapterTest {
             expectedData.dataAlias = data2;
             assertEquals(expectedData, data);
         }
+        System.out.println("Integer <- \"\", 此时：\"\" 视为 null ***END***");
 
         // Integer <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{\"a_data\": {\"a_num\": \"\"}}");
+            System.out.println("Integer <- \"\", 此时：\"\" 视为 null data.dataAlias.numAlias:" + (data.dataAlias == null ? "null" : data.dataAlias.numAlias));
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             Data2 data2 = new Data2();
@@ -872,10 +919,16 @@ public class JsonAdapterTest {
             expectedData.dataAlias = data2;
             assertEquals(expectedData, data);
         }
+
+        System.out.println("Integer <- \"\", 此时：\"\" 视为 null ***END***");
+
+        System.out.println("fromJsonLenientPhp_objFromEmptyArrayAlias  ***END***");
     }
 
     @Test
     public void fromJsonLenientPhp_multiTypeNotMatch() throws Exception {
+        System.out.println("fromJsonLenientPhp_multiTypeNotMatch  ***START***");
+
         // Integer <- "", 此时："" 视为 null
         // Long <- "", 此时："" 视为 null
         // Float <- "", 此时："" 视为 null
@@ -893,6 +946,8 @@ public class JsonAdapterTest {
                     "\"data2\": [], " +
                     "\"dataList\": [\"\", {\"num2\": \"\"}]" +
                     "}");
+            System.out.println(" data:" + data);
+
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
             expectedData.iNum2 = null;
@@ -909,6 +964,8 @@ public class JsonAdapterTest {
             expectedData.dataList = dataList;
             assertEquals(expectedData, data);
         }
+
+        System.out.println("fromJsonLenientPhp_multiTypeNotMatch  ***END***");
     }
 
     @SuppressWarnings({"unused", "EqualsReplaceableByObjectsCall"})
