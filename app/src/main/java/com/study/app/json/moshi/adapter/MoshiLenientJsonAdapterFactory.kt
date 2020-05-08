@@ -71,12 +71,13 @@ inline fun <reified T> JsonAdapter<T>.fromJsonPrimitiveType(
             }
             return@fromJsonPrimitiveType transform(this)
         } catch (e: NumberFormatException) {
-            if (T::class.java.isAssignableFrom(Int::class.java)
-                || T::class.java.isAssignableFrom(Int::class.javaObjectType)
+            //父类.class.isAssignableFrom(子类.class)
+            if (Int::class.java.isAssignableFrom(T::class.java)
+                || Int::class.javaObjectType.isAssignableFrom(T::class.java)
             ) {
                 return@fromJsonPrimitiveType parseInt(reader, this) as T?
-            } else if (T::class.java.isAssignableFrom(Long::class.java)
-                || T::class.java.isAssignableFrom(Long::class.javaObjectType)
+            } else if (Long::class.java.isAssignableFrom(T::class.java)
+                || Long::class.javaObjectType.isAssignableFrom(T::class.java)
             ) {
                 return@fromJsonPrimitiveType parseLong(reader, this) as T?
             } else {

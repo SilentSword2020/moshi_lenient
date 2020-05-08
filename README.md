@@ -19,6 +19,9 @@
 * 缺点：代码多（添加的自定义JsonAdapter类比较多），<br>后面Moshi相关的JsonAdapter源码代码逻辑调整（需要重新修改自定义JsonAdapter）;
 性能方面：不管json是不是正常，都会先检查再处理，有点性能损失问题，不过应该不大（主要是相关流的拷贝）
 
+可以考虑使用Aspectj来对Moshi中的JsonAdapter.fromJson方法进行切面编程
+
+
 ## 参考资料
 
 [Moshi项目]("https://github.com/square/moshi") https://github.com/square/moshi
