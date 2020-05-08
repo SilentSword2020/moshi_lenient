@@ -926,7 +926,7 @@ public class JsonAdapterTest {
     }
 
     @Test
-    public void fromJsonLenientPhp_multiTypeNotMatch() throws Exception {
+    public void fromJsonLenient_forAll() throws Exception {
         System.out.println("fromJsonLenientPhp_multiTypeNotMatch  ***START***");
 
         // int <- "", 此时："" 视为 0
@@ -978,6 +978,62 @@ public class JsonAdapterTest {
             data2.num2 = null;
             List<Data2> dataList = new ArrayList<>();
             dataList.add(null);
+            dataList.add(data2);
+            expectedData.dataList = dataList;
+            assertEquals(expectedData, data);
+        }
+
+        System.out.println();
+        System.out.println("fromJson normal start");
+        System.out.println();
+
+        //测试正常数据
+        {
+            Data data = lenientPhpJsonAdapter.fromJson("{" +
+                    "\"iNum\": \"66.0\", " +
+                    "\"lNum\": \"66.0\", " +
+                    "\"fNum\": \"66.0\", " +
+                    "\"dNum\": \"66.0\", " +
+
+                    "\"iNum2\": \"88\", " +
+                    "\"lNum2\": \"88.0\", " +
+                    "\"fNum2\": \"88.0\", " +
+                    "\"dNum2\": \"88.0\", " +
+
+                    "\"strList\": [\"abc\",\"def\"], " +
+                    "\"data2\": {\"num\":\"66.0\",\"num2\":\"77.0\",\"a_num\":\"88.0\"}, " +
+                    "\"dataList\": [" +
+                    "{\"num\":\"66.0\",\"num2\":\"77.0\",\"a_num\":\"88.0\"}," +
+                    "{\"num\":\"66.0\",\"num2\":\"77.0\",\"a_num\":\"88.0\"}," +
+                    "{\"num\":\"66.0\",\"num2\":\"77.0\",\"a_num\":\"88.0\"}]" +
+                    "}");
+
+            System.out.println("normal data: " + data);
+
+            Data expectedData = new Data();
+            assertNotEquals(expectedData, data);
+            expectedData.iNum = 66;
+            expectedData.lNum = 66;
+            expectedData.fNum = 66;
+            expectedData.dNum = 66;
+
+            expectedData.iNum2 = 88;
+            expectedData.lNum2 = 88l;
+            expectedData.fNum2 = 88f;
+            expectedData.dNum2 = 88.0;
+
+            ArrayList<String> strList = new ArrayList<>();
+            strList.add("abc");
+            strList.add("def");
+            expectedData.strList = strList;
+            Data2 data2 = new Data2();
+            data2.num = 66;
+            data2.num2 = 77;
+            data2.numAlias = 88;
+            expectedData.data2 = data2;
+            List<Data2> dataList = new ArrayList<>();
+            dataList.add(data2);
+            dataList.add(data2);
             dataList.add(data2);
             expectedData.dataList = dataList;
             assertEquals(expectedData, data);

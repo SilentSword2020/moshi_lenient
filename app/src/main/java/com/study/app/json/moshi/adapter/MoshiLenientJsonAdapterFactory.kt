@@ -2,6 +2,7 @@ package com.study.app.json.moshi.adapter
 
 import android.util.Log
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
@@ -57,6 +58,7 @@ inline fun <T> JsonAdapter<T>.isJsonValueInvalid(reader: JsonReader): Boolean {
 /**
  * JsonAdapter扩展方法: 用于反序列化基本类型
  */
+@Throws(JsonDataException::class)
 inline fun <reified T> JsonAdapter<T>.fromJsonPrimitiveType(
     reader: JsonReader,
     defaultValue: T?,
@@ -64,7 +66,26 @@ inline fun <reified T> JsonAdapter<T>.fromJsonPrimitiveType(
 ): T? {
     reader.nextString()?.apply {
         try {
+            if (isEmpty()) {
+                return defaultValue
+            }
             return@fromJsonPrimitiveType transform(this)
+        } catch (e: NumberFormatException) {
+            if (T::class.java.isAssignableFrom(Int::class.java)
+                || T::class.java.isAssignableFrom(Int::class.javaObjectType)
+            ) {
+                return@fromJsonPrimitiveType parseInt(reader, this) as T?
+            } else if (T::class.java.isAssignableFrom(Long::class.java)
+                || T::class.java.isAssignableFrom(Long::class.javaObjectType)
+            ) {
+                return@fromJsonPrimitiveType parseLong(reader, this) as T?
+            } else {
+                //其他数字格式异常：直接抛出JsonDataException
+                throw JsonDataException(
+                    "Expected an ${T::class.java.simpleName} but was " + this
+                            + " at path " + reader.path
+                )
+            }
         } catch (e: Throwable) {
             Log.w(TAG, e.message ?: "unknown throwable")
             return@fromJsonPrimitiveType defaultValue
@@ -72,4 +93,51 @@ inline fun <reified T> JsonAdapter<T>.fromJsonPrimitiveType(
     }
     Log.w(TAG, "${T::class.java} value is null")
     return defaultValue
+}
+
+
+/**
+ * 解析int
+ */
+@Throws(JsonDataException::class)
+fun parseInt(reader: JsonReader, value: String): Int? {
+    val asDouble: Double = try {
+        value.toDouble()
+    } catch (e: NumberFormatException) {
+        throw JsonDataException(
+            "Expected an int but was " + value
+                    + " at path " + reader.path
+        )
+    }
+    val result = asDouble.toInt()
+    if (result.toDouble() != asDouble) { // Make sure no precision was lost casting to 'int'.
+        throw JsonDataException(
+            "Expected an int but was " + value
+                    + " at path " + reader.path
+        )
+    }
+    return result
+}
+
+/**
+ * 解析long
+ */
+@Throws(JsonDataException::class)
+fun parseLong(reader: JsonReader, value: String): Long? {
+    val asDouble: Double = try {
+        value.toDouble()
+    } catch (e: NumberFormatException) {
+        throw JsonDataException(
+            "Expected an long but was " + value
+                    + " at path " + reader.path
+        )
+    }
+    val result = asDouble.toLong()
+    if (result.toDouble() != asDouble) { // Make sure no precision was lost casting to 'int'.
+        throw JsonDataException(
+            "Expected an long but was " + value
+                    + " at path " + reader.path
+        )
+    }
+    return result
 }
