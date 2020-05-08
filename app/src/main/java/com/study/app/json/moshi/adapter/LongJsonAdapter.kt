@@ -1,8 +1,6 @@
 package com.study.app.json.moshi.adapter
 
-import android.util.Log
 import com.squareup.moshi.*
-import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class LongJsonAdapter {
@@ -27,16 +25,9 @@ class LongJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Long? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toLong()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson LONG_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, LONG_DEFAULT_VALUE) {
+                    it.toLong()
                 }
-                Log.w(TAG, "long value is null")
-                return LONG_DEFAULT_VALUE
             }
 
             @ToJson
@@ -62,16 +53,9 @@ class LongJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Long? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toLong()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson LONG_OBJ_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, LONG_OBJ_DEFAULT_VALUE) {
+                    it.toLong()
                 }
-                Log.w(TAG, "Long value is null")
-                return LONG_OBJ_DEFAULT_VALUE
             }
 
             @ToJson

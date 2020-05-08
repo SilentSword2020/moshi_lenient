@@ -1,8 +1,6 @@
 package com.study.app.json.moshi.adapter
 
-import android.util.Log
 import com.squareup.moshi.*
-import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class FloatJsonAdapter {
@@ -27,16 +25,9 @@ class FloatJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Float? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toFloat()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson FLOAT_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, FLOAT_DEFAULT_VALUE) {
+                    it.toFloat()
                 }
-                Log.w(TAG, "float value is null")
-                return FLOAT_DEFAULT_VALUE
             }
 
             @ToJson
@@ -62,16 +53,9 @@ class FloatJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Float? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toFloat()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson FLOAT_OBJ_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, FLOAT_OBJ_DEFAULT_VALUE) {
+                    it.toFloat()
                 }
-                Log.w(TAG, "Float value is null")
-                return FLOAT_OBJ_DEFAULT_VALUE
             }
 
             @ToJson

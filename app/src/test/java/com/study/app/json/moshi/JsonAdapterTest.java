@@ -929,19 +929,31 @@ public class JsonAdapterTest {
     public void fromJsonLenientPhp_multiTypeNotMatch() throws Exception {
         System.out.println("fromJsonLenientPhp_multiTypeNotMatch  ***START***");
 
+        // int <- "", 此时："" 视为 0
+        // long <- "", 此时："" 视为 0
+        // float <- "", 此时："" 视为 0
+        // double <- "", 此时："" 视为 0
+
         // Integer <- "", 此时："" 视为 null
         // Long <- "", 此时："" 视为 null
         // Float <- "", 此时："" 视为 null
         // Double <- "", 此时："" 视为 null
+
         // [] <- "", 此时："" 视为 []
         // {} <- [], 此时：[] 视为 null
         // {} <- "", 此时："" 视为 null
         {
             Data data = lenientPhpJsonAdapter.fromJson("{" +
+                    "\"iNum\": \"\", " +
+                    "\"lNum\": \"\", " +
+                    "\"fNum\": \"\", " +
+                    "\"dNum\": \"\", " +
+
                     "\"iNum2\": \"\", " +
                     "\"lNum2\": \"\", " +
                     "\"fNum2\": \"\", " +
                     "\"dNum2\": \"\", " +
+
                     "\"strList\": \"\", " +
                     "\"data2\": [], " +
                     "\"dataList\": [\"\", {\"num2\": \"\"}]" +
@@ -950,10 +962,16 @@ public class JsonAdapterTest {
 
             Data expectedData = new Data();
             assertNotEquals(expectedData, data);
+            expectedData.iNum = 0;
+            expectedData.lNum = 0;
+            expectedData.fNum = 0;
+            expectedData.dNum = 0;
+
             expectedData.iNum2 = null;
             expectedData.lNum2 = null;
             expectedData.fNum2 = null;
             expectedData.dNum2 = null;
+
             expectedData.strList = Collections.emptyList();
             expectedData.data2 = null;
             Data2 data2 = new Data2();

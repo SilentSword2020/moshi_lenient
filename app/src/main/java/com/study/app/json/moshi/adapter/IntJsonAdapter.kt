@@ -1,8 +1,6 @@
 package com.study.app.json.moshi.adapter
 
-import android.util.Log
 import com.squareup.moshi.*
-import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class IntJsonAdapter {
@@ -27,16 +25,9 @@ class IntJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Int? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toInt()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson INT_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, INT_DEFAULT_VALUE) {
+                    it.toInt()
                 }
-                Log.w(TAG, "int value is null")
-                return INT_DEFAULT_VALUE
             }
 
             @ToJson
@@ -62,16 +53,9 @@ class IntJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Int? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toInt()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson INTEGER_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, INTEGER_DEFAULT_VALUE) {
+                    it.toInt()
                 }
-                Log.w(TAG, "int value is null")
-                return INTEGER_DEFAULT_VALUE
             }
 
             @ToJson

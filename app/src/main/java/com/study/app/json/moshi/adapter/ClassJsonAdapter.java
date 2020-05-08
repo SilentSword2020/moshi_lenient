@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static com.squareup.moshi.internal.Util.resolve;
-import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.isJsonValueInvalid;
+import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactoryKt.isJsonValueInvalid;
 
 /**
  * Emits a regular class as a JSON object by mapping Java fields to JSON object properties.
@@ -149,7 +149,7 @@ final class ClassJsonAdapter<T> extends JsonAdapter<T> {
     @FromJson
     @Override
     public T fromJson(JsonReader reader) throws IOException {
-        if (isJsonValueInvalid(reader)) {
+        if (isJsonValueInvalid(this, reader)) {
             //如果json值为无效，跳过这个值，不处理
             reader.skipValue();
             //返回null

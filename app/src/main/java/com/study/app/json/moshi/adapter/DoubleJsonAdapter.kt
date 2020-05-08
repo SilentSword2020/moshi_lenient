@@ -1,8 +1,6 @@
 package com.study.app.json.moshi.adapter
 
-import android.util.Log
 import com.squareup.moshi.*
-import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG
 import java.io.IOException
 
 class DoubleJsonAdapter {
@@ -27,16 +25,9 @@ class DoubleJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Double? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toDouble()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson DOUBLE_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, DOUBLE_DEFAULT_VALUE) {
+                    it.toDouble()
                 }
-                Log.w(TAG, "double value is null")
-                return DOUBLE_DEFAULT_VALUE
             }
 
             @ToJson
@@ -62,16 +53,9 @@ class DoubleJsonAdapter {
             @FromJson
             @Throws(IOException::class)
             override fun fromJson(reader: JsonReader): Double? {
-                reader.nextString()?.apply {
-                    try {
-                        return@fromJson this.toDouble()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, e.message ?: "unknown throwable")
-                        return@fromJson DOUBLE_OBJ_DEFAULT_VALUE
-                    }
+                return fromJsonPrimitiveType(reader, DOUBLE_OBJ_DEFAULT_VALUE) {
+                    it.toDouble()
                 }
-                Log.w(TAG, "Double value is null")
-                return DOUBLE_OBJ_DEFAULT_VALUE
             }
 
             @ToJson

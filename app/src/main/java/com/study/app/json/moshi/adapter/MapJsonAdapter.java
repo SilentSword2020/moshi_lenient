@@ -45,7 +45,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.TAG;
-import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.isJsonValueInvalid;
+import static com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactoryKt.isJsonValueInvalid;
 
 /**
  * {} <- "", 此时："" 视为 null
@@ -125,7 +125,7 @@ final class MapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
     @FromJson
     @Override
     public Map<K, V> fromJson(JsonReader reader) throws IOException {
-        if (isJsonValueInvalid(reader)) {
+        if (isJsonValueInvalid(this, reader)) {
             //如果json值为无效，跳过这个值，不处理
             reader.skipValue();
             //返回null

@@ -2,7 +2,6 @@ package com.study.app.json.moshi.adapter
 
 import com.squareup.moshi.*
 import com.squareup.moshi.JsonAdapter.Factory
-import com.study.app.json.moshi.adapter.MoshiLenientJsonAdapterFactory.isJsonValueInvalid
 import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
